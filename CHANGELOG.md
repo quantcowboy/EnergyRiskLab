@@ -12,8 +12,9 @@ All notable changes to this project. Versions follow [semantic versioning](https
   with its long and short legs from the same window, dates, main losing hubs, P5 and
   median, per desk and in total.
 - Hypothetical shocks (`erl.risk.shocks`) defined in a small table: Henry Hub parallel
-  and prompt-only moves, winter basis blowouts at Algonquin, TETCO M3, Chicago and SoCal,
-  a Waha basis collapse, and a winter-summer spread shock; P&L per desk and by hub.
+  and prompt-only moves, basis blowouts and collapses by hub (Algonquin, TETCO M3,
+  Chicago and SoCal in winter; Waha over the first year), and a winter-summer spread
+  shock; P&L per desk and by hub.
 - Model card `docs/model_cards/stress_testing.md`; 8 tests on hand-built examples.
 - Demo script prints the stress tables and writes them to `outputs/`.
 

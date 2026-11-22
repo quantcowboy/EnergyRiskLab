@@ -33,15 +33,24 @@ _COLUMNS = ["scenario", "hub", "tenor_from", "tenor_to", "months", "shift"]
 DEFAULT_SHOCKS = pd.DataFrame(
     [
         # scenario                          hub                    from  to    months  $/MMBtu
+        # Henry Hub moves, followed by every hub
         ("HH parallel +$1.00",              ALL_HUBS,              0,    None, None,   1.00),
         ("HH parallel -$1.00",              ALL_HUBS,              0,    None, None,  -1.00),
         ("HH prompt +$2.00",                ALL_HUBS,              0,    0,    None,   2.00),
         ("HH prompt -$1.50",                ALL_HUBS,              0,    0,    None,  -1.50),
+        # basis blowout: one hub's price, Henry Hub unchanged
         ("Algonquin basis +$10 (winter)",   "Algonquin Citygates", 0,    None, WINTER, 10.00),
         ("TETCO M3 basis +$5 (winter)",     "TETCO M3",            0,    None, WINTER,  5.00),
         ("Chicago basis +$2 (winter)",      "Chicago Citygate",    0,    None, WINTER,  2.00),
         ("SoCal basis +$3 (winter)",        "SoCal Citygate",      0,    None, WINTER,  3.00),
         ("Waha basis -$2.00 (first year)",  "Waha",                0,    11,   None,  -2.00),
+        # basis collapse: the winter premium disappears (Waha: the discount narrows)
+        ("Algonquin basis -$5 (winter)",    "Algonquin Citygates", 0,    None, WINTER, -5.00),
+        ("TETCO M3 basis -$2 (winter)",     "TETCO M3",            0,    None, WINTER, -2.00),
+        ("Chicago basis -$0.50 (winter)",   "Chicago Citygate",    0,    None, WINTER, -0.50),
+        ("SoCal basis -$1 (winter)",        "SoCal Citygate",      0,    None, WINTER, -1.00),
+        ("Waha basis +$1.00 (first year)",  "Waha",                0,    11,   None,   1.00),
+        # winter-summer spread widens
         ("Winter-summer spread +$1.00",     ALL_HUBS,              0,    None, WINTER,  0.75),
         ("Winter-summer spread +$1.00",     ALL_HUBS,              0,    None, SUMMER, -0.25),
     ],

@@ -147,6 +147,10 @@ def test_default_shocks_hand_built():
     assert p.loc["Algonquin basis +$10 (winter)", "Total"] == pytest.approx(500_000)
     # Waha basis within 12 months: 310,000 x -2
     assert p.loc["Waha basis -$2.00 (first year)", "D1"] == pytest.approx(-620_000)
+    # basis collapse: Algonquin Jan-26 50,000 x -5; Waha narrows 310,000 x +1
+    assert p.loc["Algonquin basis -$5 (winter)", "D2"] == pytest.approx(-250_000)
+    assert p.loc["Algonquin basis -$5 (winter)", "D1"] == pytest.approx(0.0)
+    assert p.loc["Waha basis +$1.00 (first year)", "Total"] == pytest.approx(310_000)
     # winter +0.75 on Dec-25 and Jan-26, summer -0.25 on Jul-26
     assert p.loc["Winter-summer spread +$1.00", "Total"] == pytest.approx(
         0.75 * (310_000 + 50_000) - 0.25 * -100_000

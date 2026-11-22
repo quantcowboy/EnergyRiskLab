@@ -71,7 +71,17 @@ Default scenarios:
 | Chicago basis +$2 (winter) | Chicago Citygate, Dec-Feb contracts |
 | SoCal basis +$3 (winter) | SoCal Citygate, Dec-Feb contracts |
 | Waha basis -$2.00 (first year) | Waha, tenors 0-11 |
+| Algonquin basis -$5 (winter) | Algonquin Citygates, Dec-Feb contracts |
+| TETCO M3 basis -$2 (winter) | TETCO M3, Dec-Feb contracts |
+| Chicago basis -$0.50 (winter) | Chicago Citygate, Dec-Feb contracts |
+| SoCal basis -$1 (winter) | SoCal Citygate, Dec-Feb contracts |
+| Waha basis +$1.00 (first year) | Waha, tenors 0-11 |
 | Winter-summer spread +$1.00 | All hubs: Dec-Feb +$0.75, Apr-Oct -$0.25 (Nov and Mar unchanged) |
+
+Each basis move comes in both directions, so a book that is long a hub's basis and
+one that is short it both see a loss. The blowouts are the larger move; the
+collapses take away about the whole synthetic winter premium of the hub (for Waha,
+the discount to Henry Hub narrows).
 
 The sizes are judgement calls on a synthetic market, chosen to be large relative to
 the 5-day moves in the generated history; they are not calibrated to any real event.
@@ -102,9 +112,10 @@ the 5-day moves in the generated history; they are not calibrated to any real ev
 - **Missing prices.** A shifted position with no history at all raises an error.
   A window where a contract has no price at its start or end is dropped, which can
   shorten the sample silently for back contracts near the end of the curve.
-- **Hypothetical shocks** are one-directional as defined (basis widening, not a
-  basis collapse); the table is meant to be edited and extended for the book at hand.
-  No correlation or probability is implied between scenarios.
+- **Hypothetical shocks** move one hub's basis at a time; a blowout at one hub with a
+  collapse at another (a spread between regions) is not in the default table. The
+  table is meant to be edited and extended for the book at hand. No correlation or
+  probability is implied between scenarios.
 
 ## 5. Testing
 
@@ -118,7 +129,7 @@ hand:
 | Forward month (Feb 2025): the delivered Feb-25 position rolls off; 21 windows at +5,000 | Exact |
 | Only prior years and history up to the as-of date are used; desk and total books | Exact |
 | A shifted position with no history raises | Passes |
-| Default shocks on a hand-built four-line book: parallel, prompt, Algonquin winter basis, Waha first-year basis, winter-summer spread | Exact |
+| Default shocks on a hand-built four-line book: parallel, prompt, Algonquin winter basis blowout and collapse, Waha first-year basis both ways, winter-summer spread | Exact |
 | A basis swap is flat to a Henry Hub parallel move and gains 310,000 x 5 on a +$5 TETCO M3 basis move; by-hub split | Exact |
 | A custom shock table; a bad tenor range or missing column raises | Passes |
 
