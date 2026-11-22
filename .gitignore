@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Environments and secrets
+.venv/
+venv/
+.env
+.env.*
+
+# Tools
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Generated data and outputs (rebuilt from code: never committed)
+/data/
+/outputs/
+*.csv
+*.parquet
+*.xlsx
+
+# OS
+.DS_Store
+Thumbs.db
