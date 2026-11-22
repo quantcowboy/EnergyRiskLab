@@ -1,4 +1,4 @@
-"""End-to-end demo: synthetic market -> trades -> exposure -> VaR / ES -> backtest.
+"""End-to-end demo: synthetic market -> trades -> exposure -> VaR / ES -> backtest -> stress.
 
 python scripts/run_demo.py            (prints the results, writes outputs/)
 python scripts/run_demo.py --seed 3   (a different synthetic market)
@@ -16,6 +16,8 @@ from erl.data.trades import generate_trades
 from erl.positions import exposures, mark_to_market
 from erl.risk.backtest import christoffersen_independence, kupiec_pof, rolling_var_backtest
 from erl.risk.scenarios import exposure_by_tenor, scenario_pnl, tenor_changes, window
+from erl.risk.shocks import shock_by_hub, shock_pnl
+from erl.risk.stress import stress_by_month
 from erl.risk.var import risk_figures
 
 OUT = Path(__file__).resolve().parents[1] / "outputs"
@@ -84,8 +86,42 @@ def main() -> None:
     )
     print(f"  Kupiec p-value {p_k:.3f}   Christoffersen independence p-value {p_c:.3f}")
 
+    # historical stress: worst 5-day window of each calendar month in prior years
+    stress = stress_by_month(expo, market, asof, months_ahead=12, horizon=5)
+    total = stress[stress["book"] == "Total"]
+    k = {
+        c: (total[c] / 1e3).round(0) for c in ("worst", "worst_long", "worst_short", "p5", "median")
+    }
+    show = total.assign(
+        **k,
+        month=total["month"].dt.strftime("%b %Y"),
+        window=total["worst_start"].dt.strftime("%d %b %Y")
+        + " - "
+        + total["worst_end"].dt.strftime("%d %b"),
+    )
+    print(
+        "\nHistorical stress, total book, $ thousands: every 5-day window of the same "
+        "calendar month in prior years"
+    )
+    print(
+        show[
+            ["month", "windows", "worst", "worst_long", "worst_short", "window", "p5", "median"]
+        ].to_string(index=False)
+    )
+    print("Main hubs in the worst window:")
+    for _, r in show.iterrows():
+        print(f"  {r['month']}: {r['main_hubs']}")
+
+    # hypothetical shocks
+    shocks = shock_pnl(expo, asof)
+    print("\nHypothetical shocks, $ thousands")
+    print((shocks / 1e3).round(0).to_string())
+
     OUT.mkdir(exist_ok=True)
     table.to_csv(OUT / f"risk_{asof:%Y%m%d}.csv", index=False)
+    stress.to_csv(OUT / f"stress_by_month_{asof:%Y%m%d}.csv", index=False)
+    shocks.to_csv(OUT / f"shocks_{asof:%Y%m%d}.csv")
+    shock_by_hub(expo, asof).to_csv(OUT / f"shocks_by_hub_{asof:%Y%m%d}.csv")
     expo.to_csv(OUT / f"exposure_{asof:%Y%m%d}.csv", index=False)
     bt.to_csv(OUT / f"backtest_{asof:%Y%m%d}.csv")
     print(f"\nWritten to {OUT}")
